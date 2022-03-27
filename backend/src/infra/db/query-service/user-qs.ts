@@ -33,4 +33,17 @@ export class UserQS implements IUserQS {
         }
 
     }
+
+    public async getUser(email: string): Promise<UserDTO> {
+        const user = await this.prismaClient.user.findFirst({
+            where: {
+                email: email
+            },
+        })
+
+        if (user === null) {
+            throw new Error("存在しないユーザーです")
+        }
+        return new UserDTO(user)
+    }
 }

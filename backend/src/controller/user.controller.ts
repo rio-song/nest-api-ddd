@@ -40,4 +40,21 @@ export class UserController {
             userStatus: postUserDto.userStatus,
         })
     }
+
+    @Put()
+    async putUser(
+        @Body() putUserDto: PutUserRequest,
+    ): Promise<void> {
+        const prisma = new PrismaClient()
+        const repo = new UserRepository(prisma)
+        const userQS = new UserQS(prisma)
+        const usecase = new PutUserUseCase(repo, userQS)
+        await usecase.do({
+            lastName: putUserDto.lastName,
+            firstName: putUserDto.firstName,
+            email: putUserDto.email,
+            userStatus: putUserDto.userStatus,
+        })
+    }
+
 }

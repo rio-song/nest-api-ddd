@@ -1,4 +1,4 @@
-import { IUserQS } from './query-service-interface/user-qs'
+import { IUserQS } from '../query-service-interface/user-qs'
 
 export class GetAllUsersUseCase {
     private readonly userQS: IUserQS

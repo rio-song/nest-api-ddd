@@ -17,5 +17,6 @@ export class UserDTO {
 
 export interface IUserQS {
     getAllUsers(): Promise<UserDTO[]>
+    getUser(email: string): Promise<UserDTO>
     emailDoubleCheck(email: string): Promise<boolean>
 }
