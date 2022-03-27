@@ -33,9 +33,6 @@ export class UserRepository implements IUserRepository {
                 id: id,
             },
             data: {
-                lastName: lastName,
-                firstName: firstName,
-                email: email,
                 userStatus: userStatus
             },
         })
