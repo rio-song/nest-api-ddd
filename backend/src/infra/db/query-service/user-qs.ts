@@ -19,4 +19,18 @@ export class UserQS implements IUserQS {
                 }),
         )
     }
+
+    public async emailDoubleCheck(email: string): Promise<boolean> {
+        const emailDoubleCheck = await this.prismaClient.user.findFirst({
+            where: {
+                email: email
+            },
+        })
+        if (emailDoubleCheck === null) {
+            return true;
+        } else {
+            return false
+        }
+
+    }
 }
