@@ -36,36 +36,23 @@ export class PairRepository implements IPairRepository {
         })
         return savedPairEntity
     }
-    // public async savePairMember(pairEntity: Pair,): Promise<Pai> {
-    //     const { id, pairName } = pairEntity.getAllProperties()
 
-    //     const savedPairDatamodel = await this.prismaClient.pair.create({
-    //         data: {
-    //             id: id,
-    //             pairName: pairName.getPairNameVO(),
-    //         },
-    //     })
+    public async update(pairEntity: Pair): Promise<Pair> {
+        const { id, pairName } = pairEntity.getAllProperties()
 
+        const { users } = pairEntity.getUsers()
 
-    //     const savedPairEntity = new Pair({
-    //         ...savedPairDatamodel,
-    //     })
-    //     return savedPairEntity
-    // }
-    // public async update(userEntity: User): Promise<User> {
-    //     const { id, lastName, firstName, email, userStatus } = userEntity.getAllProperties()
+        const updatedUserDatamodel = await this.prismaClient.user.update({
+            where: {
+                id: id,
+            },
+            data: {
 
-    //     const updatedUserDatamodel = await this.prismaClient.user.update({
-    //         where: {
-    //             id: id,
-    //         },
-    //         data: {
-    //             userStatus: userStatus
-    //         },
-    //     })
-    //     const updatedUserEntity = new User({
-    //         ...updatedUserDatamodel,
-    //     })
-    //     return updatedUserEntity
-    // }
+            },
+        })
+        const updatedUserEntity = new Pair({
+            ...updatedUserDatamodel,
+        })
+        return updatedUserEntity
+    }
 }

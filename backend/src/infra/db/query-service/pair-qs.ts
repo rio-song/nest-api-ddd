@@ -20,30 +20,16 @@ export class PairQS implements IPairQS {
         )
     }
 
-    // public async emailDoubleCheck(email: string): Promise<boolean> {
-    //     const emailDoubleCheck = await this.prismaClient.user.findFirst({
-    //         where: {
-    //             email: email
-    //         },
-    //     })
-    //     if (emailDoubleCheck === null) {
-    //         return true;
-    //     } else {
-    //         return false
-    //     }
+    public async getPair(pairName: string): Promise<PairDTO> {
+        const pair = await this.prismaClient.pair.findFirst({
+            where: {
+                pairName: pairName
+            },
+        })
 
-    // }
-
-    // public async getUser(email: string): Promise<UserDTO> {
-    //     const user = await this.prismaClient.user.findFirst({
-    //         where: {
-    //             email: email
-    //         },
-    //     })
-
-    //     if (user === null) {
-    //         throw new Error("存在しないユーザーです")
-    //     }
-    //     return new UserDTO(user)
-    // }
+        if (pair === null) {
+            throw new Error("存在しないペアです")
+        }
+        return new PairDTO(pair)
+    }
 }
