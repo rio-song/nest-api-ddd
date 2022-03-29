@@ -15,3 +15,28 @@ model user {
   email      String @db.Text
   userStatus String @db.Text
 }
+
+// model team {
+//   id       String @id
+//   teamName Int
+// }
+
+// model teamMember {
+//   id     String @id
+//   userId String @db.Text
+//   teamId String @db.Text
+// }
+
+model pair {
+  id       String @id
+  pairName String @db.Text
+  // teamId   String @db.Text
+}
+
+model pairMember {
+  id     String @id
+  userId String @db.Text
+  pairId String @db.Text
+}
+
+//pairMemberとteamMemberは１つのDBでも成り立つ？
