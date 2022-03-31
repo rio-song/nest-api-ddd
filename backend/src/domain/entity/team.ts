@@ -5,8 +5,8 @@ import { Pair } from "./pair"
 export class Team {
     private id: string
     private teamName: TeamNameVO
-    private pairs: Pair
-    public constructor(props: { id: string; teamName: TeamNameVO; pairs: Pair }) {
+    private pairs: Pair | null
+    public constructor(props: { id: string; teamName: TeamNameVO; pairs: Pair | null }) {
         const { id, teamName, pairs } = props
         this.id = id
         this.teamName = teamName

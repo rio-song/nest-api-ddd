@@ -27,22 +27,16 @@ export class TeamQS implements ITeamQS {
                 }))
 
     }
+
+    public async getTeam(teamName: number): Promise<boolean> {
+        const team = await this.prismaClient.team.findFirst({
+            where: {
+                teamName: teamName
+            },
+        })
+        if (team === null) {
+            return false
+        } else
+            return true
+    }
 }
-
-
-
-    // public async getTeam(teamName: string): Promise<TeamDTO[]> {
-    //     const team = await this.prismaClient.team.findMany({
-    //         where: {
-    //             teamName: teamName
-    //         },
-    //     })
-
-    //     return team.map(
-    //         (teamDM) =>
-    //             new TeamDTO({
-    //                 ...teamDM,
-    //             }),
-    //     )
-    // }
-

@@ -11,12 +11,11 @@ export class TeamDTO {
         this.id = id
         this.teamName = teamName
         this.pair = pair
-
     }
 
 }
 
 export interface ITeamQS {
     getAllTeams(): Promise<TeamDTO[]>
-    // getTeam(teamName: string): Promise<TeamDTO[]>
+    getTeam(teamName: number): Promise<boolean>
 }
