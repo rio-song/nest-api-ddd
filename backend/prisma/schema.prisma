@@ -9,34 +9,42 @@ generator client {
 }
 
 model user {
-  id         String @id
-  lastName   String @db.Text
-  firstName  String @db.Text
-  email      String @db.Text
-  userStatus String @db.Text
+  id               String             @id
+  lastName         String             @db.Text
+  firstName        String             @db.Text
+  email            String             @db.Text
+  userStatus       String             @db.Text
+  pairBelongMember pairBelongMember[]
 }
 
-// model team {
-//   id       String @id
-//   teamName Int
-// }
+model team {
+  id             String           @id
+  teamName       Int
+  pairBelongTeam pairBelongTeam[]
+  pair           pair[]
+}
 
-// model teamMember {
-//   id     String @id
-//   userId String @db.Text
-//   teamId String @db.Text
-// }
+model pairBelongTeam {
+  id     String @id
+  pairId String @db.Text
+  teamId String @db.Text
+  pair   pair   @relation(fields: [pairId], references: [id])
+  team   team   @relation(fields: [teamId], references: [id])
+}
 
 model pair {
-  id       String @id
-  pairName String @db.Text
-  // teamId   String @db.Text
+  id               String             @id
+  pairName         String             @db.Text
+  teamId           String             @db.Text
+  team             team               @relation(fields: [teamId], references: [id])
+  pairBelongTeam   pairBelongTeam[]
+  pairBelongMember pairBelongMember[]
 }
 
-model pairMember {
+model pairBelongMember {
   id     String @id
   userId String @db.Text
   pairId String @db.Text
+  user   user   @relation(fields: [userId], references: [id])
+  pair   pair   @relation(fields: [pairId], references: [id])
 }
-
-//pairMemberとteamMemberは１つのDBでも成り立つ？
