@@ -2,6 +2,7 @@ import { Body, Controller, Get, Post, Put } from '@nestjs/common'
 //import { ApiResponse } from '@nestjs/swagger'
 import { GetTeamResponse } from './response/get-team-response'
 import { PostTeamRequest } from './request/post-team-request'
+import { PutTeamRequest } from './request/put-team-request'
 import { PutTeamUseCase } from 'src/app/team-usecate/put-team-usecase'
 import { TeamRepository } from 'src/infra/db/repository/team-repository'
 import { PostTeamUseCase } from 'src/app/team-usecate/post-team-usecase'
@@ -39,16 +40,18 @@ export class TeamController {
 
     @Put()
     async putTeam(
-        @Body() postTeamDto: PostTeamRequest,
+        @Body() putTeamDto: PutTeamRequest,
     ): Promise<void> {
         const prisma = new PrismaClient()
         const repo = new TeamRepository(prisma)
         const teamQS = new TeamQS(prisma)
         //const userQS = new UserQS(prisma)
-        const usecase = new PutTeamUseCase(teamQS, repo, userQS)
+        const usecase = new PutTeamUseCase(repo
+            //, repo, userQS
+        )
         await usecase.do({
-            teamName: postTeamDto.teamName,
-            pairNames: postTeamDto.pairNames
+            teamName: putTeamDto.teamName,
+            pairName: putTeamDto.pairName
         })
     }
 

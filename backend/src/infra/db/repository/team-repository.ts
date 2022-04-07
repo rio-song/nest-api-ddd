@@ -3,6 +3,7 @@ import { PrismaClient } from '@prisma/client'
 import { ITeamRepository } from 'src/domain/repository-interface/team-repository'
 import { Team } from 'src/domain/entity/team'
 import { createRandomIdString } from 'src/util/random'
+import { Pair, PairNameVO } from 'src/domain/entity/pair'
 
 export class TeamRepository implements ITeamRepository {
     private prismaClient: PrismaClient
@@ -35,40 +36,55 @@ export class TeamRepository implements ITeamRepository {
         return savedTeamEntity
     }
 
-    public async update(teamEntity: Team): Promise<Team> {
-        const { id, pairName } = pairEntity.getAllProperties()
+    public async update(params: any): Promise<any> {
+        //const { id, pairName, teamName } = pairEntity.getAllProperties()
+        const {
+            teamName,
+            pairName
+        } = params
 
-        const { users } = pairEntity.getUsers()
+        //const { users } = pairEntity.getUsers()
 
-        const updatedUserDatamodel = await this.prismaClient.user.update({
+        const team = await this.prismaClient.team.findFirst({
             where: {
-                id: users.getUserId().id,
-            },
-            data: {
-                pairId: id
-            },
+                teamName: teamName.getTeamNameVO()
+            }
         })
-        const updatedUserEntity = new Pair({
-            ...updatedUserDatamodel,
-        })
-        return updatedUserEntity
-    }
+        if (team === null) {
+            throw new Error("既に存在するチーム名です");
+        }
 
-    public async delete(teamEntity: Team): Promise<Team> {
-        const { id, pairName } = pairEntity.getAllProperties()
-
-        const { users } = pairEntity.getUsers()
-
-        const updatedUserDatamodel = await this.prismaClient.user.deleteMany({
+        const pair = await this.prismaClient.pair.findFirst({
             where: {
-                id: users.getUserId().id,
-            },
+                pairName: pairName.getPairNameVO()
+            }
+        })
+
+        if (pair === null) {
+            throw new Error("既に存在するペア名です");
+        }
+
+        //リクエストが配列なので、１件でも複数でもteamに保存する。
+        //配列内の数を数えて、その数だけペアの名前が存在するか確認する。
+        // 存在しないものはエラーで返す。
+        // 存在するペアをまとめて、チームに紐づける。
+
+        const deletedUserDatamodel = await this.prismaClient.pairBelongTeam.delete({
+            where: {
+                id: team.id,
+            }
+        })
+
+        const savedTeamDatamodel = await this.prismaClient.pairBelongTeam.create({
             data: {
-                pairId: id
+                id: createRandomIdString(),
+                pairId: pair.id,
+                teamId: team.id,
             },
         })
-        const updatedUserEntity = new Pair({
-            ...updatedUserDatamodel,
+
+        const updatedUserEntity = new Team({
+            id: savedTeamDatamodel.id, teamName: teamName, pairs: new Pair({ id: pair.id, pairName })
         })
         return updatedUserEntity
     }
