@@ -8,11 +8,11 @@ export class GetPairResponse {
     public constructor(params: { Pairs: PairDTO[] }) {
         const { Pairs } = params
         console.log("return")
-        this.Pair = Pairs.map(({ id, pairName, teamId }) => {
+        this.Pair = Pairs.map(({ id, pairName }) => {
             return new Pair({
                 id,
                 pairName,
-                teamId,
+                //  teamId,
             })
         })
     }
@@ -25,16 +25,16 @@ class Pair {
     @ApiProperty()
     pairName: string
 
-    @ApiProperty()
-    teamId: string
+    // @ApiProperty()
+    // teamId: string
 
     public constructor(params: {
         id: string
         pairName: string
-        teamId: string
+        // teamId: string
     }) {
         this.id = params.id
         this.pairName = params.pairName
-        this.teamId = params.teamId
+        // this.teamId = params.teamId
     }
 }

@@ -11,5 +11,4 @@ export class PairDTO {
 
 export interface IPairQS {
     getAllPairs(): Promise<PairDTO[]>
-    getPair(pairName: string): Promise<PairDTO>
 }
