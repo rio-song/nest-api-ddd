@@ -20,16 +20,19 @@ export class PairQS implements IPairQS {
         )
     }
 
-    public async getPair(pairName: string): Promise<PairDTO> {
-        const pair = await this.prismaClient.pair.findFirst({
+    public async getPair(pairName: string): Promise<PairDTO[]> {
+        const pair = await this.prismaClient.pair.findMany({
             where: {
                 pairName: pairName
             },
         })
 
-        if (pair === null) {
-            throw new Error("存在しないペアです")
-        }
-        return new PairDTO(pair)
+        return pair.map(
+            (pairDM) =>
+                new PairDTO({
+                    ...pairDM,
+                }),
+        )
     }
+
 }

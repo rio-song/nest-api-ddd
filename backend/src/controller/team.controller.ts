@@ -2,6 +2,7 @@ import { Body, Controller, Get, Post, Put } from '@nestjs/common'
 //import { ApiResponse } from '@nestjs/swagger'
 import { GetTeamResponse } from './response/get-team-response'
 import { PostTeamRequest } from './request/post-team-request'
+import { PutTeamUseCase } from 'src/app/team-usecate/put-team-usecase'
 import { TeamRepository } from 'src/infra/db/repository/team-repository'
 import { PostTeamUseCase } from 'src/app/team-usecate/post-team-usecase'
 import { GetAllTeamsUseCase } from 'src/app/team-usecate/get-team-usecase'
@@ -29,26 +30,26 @@ export class TeamController {
     ): Promise<void> {
         const prisma = new PrismaClient()
         const repo = new TeamRepository(prisma)
-        const pairQS = new TeamQS(prisma)
-        const usecase = new PostTeamUseCase(repo, pairQS)
+        const teamQS = new TeamQS(prisma)
+        const usecase = new PostTeamUseCase(repo, teamQS)
         await usecase.do({
             teamName: postTeamDto.teamName,
         })
     }
 
-    // @Put()
-    // async putPair(
-    //     @Body() postPairDto: PostPairRequest,
-    // ): Promise<void> {
-    //     const prisma = new PrismaClient()
-    //     const repo = new PairRepository(prisma)
-    //     const pairQS = new PairQS(prisma)
-    //     const userQS = new UserQS(prisma)
-    //     const usecase = new PutPairUseCase(pairQS, repo, userQS)
-    //     await usecase.do({
-    //         pairName: postPairDto.pairName,
-    //         memberEmails: postPairDto.memberEmails
-    //     })
-    // }
+    @Put()
+    async putTeam(
+        @Body() postTeamDto: PostTeamRequest,
+    ): Promise<void> {
+        const prisma = new PrismaClient()
+        const repo = new TeamRepository(prisma)
+        const teamQS = new TeamQS(prisma)
+        //const userQS = new UserQS(prisma)
+        const usecase = new PutTeamUseCase(teamQS, repo, userQS)
+        await usecase.do({
+            teamName: postTeamDto.teamName,
+            pairNames: postTeamDto.pairNames
+        })
+    }
 
 }

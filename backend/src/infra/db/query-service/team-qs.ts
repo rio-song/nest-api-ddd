@@ -14,8 +14,12 @@ export class TeamQS implements ITeamQS {
     public async getAllTeams(): Promise<TeamDTO[]> {
         const allTeams = await this.prismaClient.team.findMany({
             include: {
-                pair: true,
-            }
+                pairBelongTeam: {
+                    include: {
+                        pair: true
+                    }
+                },
+            },
         })
 
         return allTeams.map(
@@ -23,20 +27,7 @@ export class TeamQS implements ITeamQS {
                 new TeamDTO({
                     id: teamDM.id,
                     teamName: teamDM.teamName,
-                    pair: { teamDM.pair.map() => new PairDTO({ id: teamDM.pair.id, pairName: teamDM.pair.pairName, teamId: teamDM.pair.teamId }) },
+                    pair: teamDM.pairBelongTeam.map((p) => new PairDTO({ id: p.pair.id, pairName: p.pair.pairName })),
                 }))
-
-    }
-
-    public async getTeam(teamName: number): Promise<boolean> {
-        const team = await this.prismaClient.team.findFirst({
-            where: {
-                teamName: teamName
-            },
-        })
-        if (team === null) {
-            return false
-        } else
-            return true
     }
 }
