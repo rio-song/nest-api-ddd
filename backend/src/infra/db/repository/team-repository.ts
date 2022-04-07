@@ -13,6 +13,15 @@ export class TeamRepository implements ITeamRepository {
     public async save(teamEntity: Team): Promise<Team> {
         const { id, teamName } = teamEntity.getAllProperties()
 
+        const team = await this.prismaClient.team.findFirst({
+            where: {
+                teamName: teamName.getTeamNameVO()
+            }
+        })
+        if (team !== null) {
+            throw new Error("既に存在するチーム名です");
+        }
+
         const savedTeamDatamodel = await this.prismaClient.team.create({
             data: {
                 id: id,
@@ -26,22 +35,41 @@ export class TeamRepository implements ITeamRepository {
         return savedTeamEntity
     }
 
-    // public async update(pairEntity: Pair): Promise<Pair> {
-    //     const { id, pairName } = pairEntity.getAllProperties()
+    public async update(teamEntity: Team): Promise<Team> {
+        const { id, pairName } = pairEntity.getAllProperties()
 
-    //     const { users } = pairEntity.getUsers()
+        const { users } = pairEntity.getUsers()
 
-    //     const updatedUserDatamodel = await this.prismaClient.user.update({
-    //         where: {
-    //             id: users.getUserId().id,
-    //         },
-    //         data: {
-    //             pairId: id
-    //         },
-    //     })
-    //     const updatedUserEntity = new Pair({
-    //         ...updatedUserDatamodel,
-    //     })
-    //     return updatedUserEntity
-    //}
+        const updatedUserDatamodel = await this.prismaClient.user.update({
+            where: {
+                id: users.getUserId().id,
+            },
+            data: {
+                pairId: id
+            },
+        })
+        const updatedUserEntity = new Pair({
+            ...updatedUserDatamodel,
+        })
+        return updatedUserEntity
+    }
+
+    public async delete(teamEntity: Team): Promise<Team> {
+        const { id, pairName } = pairEntity.getAllProperties()
+
+        const { users } = pairEntity.getUsers()
+
+        const updatedUserDatamodel = await this.prismaClient.user.deleteMany({
+            where: {
+                id: users.getUserId().id,
+            },
+            data: {
+                pairId: id
+            },
+        })
+        const updatedUserEntity = new Pair({
+            ...updatedUserDatamodel,
+        })
+        return updatedUserEntity
+    }
 }

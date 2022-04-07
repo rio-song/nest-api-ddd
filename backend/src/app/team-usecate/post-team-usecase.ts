@@ -20,12 +20,6 @@ export class PostTeamUseCase {
             teamName,
         } = params
 
-        const gatTeamName = await this.teamQS.getTeam(teamName)
-
-        if (gatTeamName === true) {
-            throw new Error("既に存在するチーム名です");
-        }
-
         const teamEntity = new Team({
             id: createRandomIdString(),
             teamName: new TeamNameVO(teamName),
