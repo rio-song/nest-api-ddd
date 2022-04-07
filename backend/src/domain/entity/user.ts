@@ -27,4 +27,10 @@ export class User {
             userStatus: this.userStatus,
         }
     }
+
+    public getUserId() {
+        return {
+            id: this.id
+        }
+    }
 }

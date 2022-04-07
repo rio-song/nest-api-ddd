@@ -21,7 +21,6 @@ model team {
   id             String           @id
   teamName       Int
   pairBelongTeam pairBelongTeam[]
-  pair           pair[]
 }
 
 model pairBelongTeam {
@@ -35,8 +34,6 @@ model pairBelongTeam {
 model pair {
   id               String             @id
   pairName         String             @db.Text
-  teamId           String             @db.Text
-  team             team               @relation(fields: [teamId], references: [id])
   pairBelongTeam   pairBelongTeam[]
   pairBelongMember pairBelongMember[]
 }
