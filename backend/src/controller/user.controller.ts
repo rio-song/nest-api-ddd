@@ -1,15 +1,14 @@
 import { Body, Controller, Get, Post, Put } from '@nestjs/common'
-//import { ApiResponse } from '@nestjs/swagger'
-import { GetUserResponse } from './response/get-user-response'
+import { PrismaClient } from '@prisma/client'
 import { PostUserRequest } from './request/post-user-request'
 import { PutUserRequest } from './request/put-user-request'
+import { GetUserResponse } from './response/get-user-response'
 import { GetAllUsersUseCase } from '../app/user-usecase/get-user-usecase'
 import { PostUserUseCase } from '../app/user-usecase/post-user-usecase'
 import { PutUserUseCase } from '../app/user-usecase/put-user-usecase'
 import { UserRepository } from 'src/infra/db/repository/user-repository'
+import { TeamRepository } from 'src/infra/db/repository/team-repository'
 import { UserQS } from 'src/infra/db/query-service/user-qs'
-import { PrismaClient } from '@prisma/client'
-import { Injectable } from '@nestjs/common';
 
 @Controller({
     path: '/user',
@@ -30,9 +29,9 @@ export class UserController {
         @Body() postUserDto: PostUserRequest,
     ): Promise<void> {
         const prisma = new PrismaClient()
-        const repo = new UserRepository(prisma)
-        const userQS = new UserQS(prisma)
-        const usecase = new PostUserUseCase(repo, userQS)
+        const userRepo = new UserRepository(prisma)
+        const teamRepo = new TeamRepository(prisma)
+        const usecase = new PostUserUseCase(userRepo, teamRepo)
         await usecase.do({
             lastName: postUserDto.lastName,
             firstName: postUserDto.firstName,
@@ -46,9 +45,10 @@ export class UserController {
         @Body() putUserDto: PutUserRequest,
     ): Promise<void> {
         const prisma = new PrismaClient()
-        const repo = new UserRepository(prisma)
+        const repoUser = new UserRepository(prisma)
+        const teamRepo = new TeamRepository(prisma)
         const userQS = new UserQS(prisma)
-        const usecase = new PutUserUseCase(repo, userQS)
+        const usecase = new PutUserUseCase(userQS, repoUser, teamRepo)
         await usecase.do({
             lastName: putUserDto.lastName,
             firstName: putUserDto.firstName,

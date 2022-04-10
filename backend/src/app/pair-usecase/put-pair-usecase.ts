@@ -1,25 +1,19 @@
-import { Pair, PairNameVO } from 'src/domain/entity/pair'
-import { User } from 'src/domain/entity/user'
+
 import { IPairQS } from '../query-service-interface/pair-qs'
-import { IPairRepository } from 'src/domain/repository-interface/pair-repository'
 import { createRandomIdString } from 'src/util/random'
 import { IUserQS } from '../query-service-interface/user-qs'
+import { ITeamRepository } from 'src/domain/repository-interface/team-repository'
 
+export class PutPairUseCase {
+    private readonly teamRepo: ITeamRepository
 
-export class PutUserUseCase {
-    private readonly pairRepository: IPairRepository
-    private readonly pairQS: IPairQS
-    private readonly userQS: IUserQS
-
-    public constructor(pairQS: IPairQS, pairRepository: IPairRepository, userQS: IUserQS) {
-        this.pairQS = pairQS,
-            this.pairRepository = pairRepository
-        this.userQS = userQS
+    public constructor(teamRepo: ITeamRepository) {
+        this.teamRepo = teamRepo
     }
 
     public async do(params: {
         pairName: string;
-        memberEmails: string
+        memberEmails: string[]
     }) {
 
         const {
@@ -27,14 +21,12 @@ export class PutUserUseCase {
             memberEmails
         } = params
 
-        const pair = await this.pairQS.getPair(pairName)
-        const user = await this.userQS.getUser(memberEmails)
+        //ペアドメインに本来ならかくことかもしれないが、ペアドメインでは、３件以上ある場合、ユーザーを分割するが、
+        //pairの更新時にユーザーが違うユーザーにくっつくのは違和感なので、ここでエラーを返すように記載。
+        if (memberEmails.length > 3) {
+            throw new Error("3人以上では更新できません")
+        }
 
-        const pairEntity = new Pair({
-            id: pair.id,
-            pairName,
-            users: new User(user)
-        })
-        await this.pairRepository.update(pairEntity)
+        const pair = await this.teamRepo.updatePairMember(pairName, memberEmails)
     }
 }

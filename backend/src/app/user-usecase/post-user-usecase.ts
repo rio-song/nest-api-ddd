@@ -2,15 +2,15 @@ import { User } from 'src/domain/entity/user'
 import { createRandomIdString } from 'src/util/random'
 import { IUserRepository } from 'src/domain/repository-interface/user-repository'
 import { DomainService } from 'src/domain/domain-service/domain-service'
-import { IUserQS } from 'src/app/query-service-interface/user-qs'
+import { ITeamRepository } from 'src/domain/repository-interface/team-repository'
 
 export class PostUserUseCase {
     private readonly userRepo: IUserRepository
-    private readonly userQS: IUserQS
+    private readonly teamRepo: ITeamRepository
 
-    public constructor(userRepo: IUserRepository, userQS: IUserQS) {
+    public constructor(userRepo: IUserRepository, teamRepo: ITeamRepository,) {
         this.userRepo = userRepo,
-            this.userQS = userQS
+            this.teamRepo = teamRepo
     }
     public async do(params: {
         lastName: string;
@@ -26,11 +26,7 @@ export class PostUserUseCase {
             userStatus,
         } = params
 
-        const domainService = new DomainService(this.userQS)
-
-        if (await domainService.emailDoubleCheck(email) === null) {
-            throw new Error('登録済みのメールアドレスです.')
-        }
+        new DomainService().emailDoubleCheck(email);
 
         const userEntity = new User({
             id: createRandomIdString(),
@@ -39,7 +35,12 @@ export class PostUserUseCase {
             email,
             userStatus,
         })
-        await this.userRepo.save(userEntity)
-    }
 
+        //ここもトランザクション必要
+        await this.userRepo.save(userEntity);
+
+        if (userStatus === "studying") {
+            const allTeamMember = await this.teamRepo.getTeamPairbyUserName(userEntity.getUserId().id);
+        }
+    }
 }

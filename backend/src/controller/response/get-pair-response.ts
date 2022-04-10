@@ -12,7 +12,6 @@ export class GetPairResponse {
             return new Pair({
                 id,
                 pairName,
-                //  teamId,
             })
         })
     }
@@ -25,16 +24,11 @@ class Pair {
     @ApiProperty()
     pairName: string
 
-    // @ApiProperty()
-    // teamId: string
-
     public constructor(params: {
         id: string
         pairName: string
-        // teamId: string
     }) {
         this.id = params.id
         this.pairName = params.pairName
-        // this.teamId = params.teamId
     }
 }

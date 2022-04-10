@@ -1,16 +1,19 @@
 export class Pair {
     private id: string
     private pairName: PairNameVO
-    public constructor(props: { id: string; pairName: PairNameVO; }) {
-        const { id, pairName, } = props
+    private users: string[]
+    public constructor(props: { id: string; pairName: PairNameVO; users: string[] }) {
+        const { id, pairName, users } = props
         this.id = id
         this.pairName = pairName
+        this.users = users
     }
 
     public getAllProperties() {
         return {
             id: this.id,
             pairName: this.pairName,
+            users: this.users
         }
     }
 
@@ -19,7 +22,11 @@ export class Pair {
             pairName: this.pairName,
         }
     }
+    public getPairId() {
+        return { id: this.id }
+    }
 }
+
 
 export class PairNameVO {
     private readonly pairName: string;

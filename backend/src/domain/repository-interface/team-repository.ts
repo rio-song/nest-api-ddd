@@ -1,7 +1,11 @@
 import { Team } from '../entity/team'
 
 export interface ITeamRepository {
-    save(Team: Team): Promise<Team>
     //書き方不明、保留中
-    update(params: any): Promise<any>
+    updatePairTeam(teamEntity: Team): Promise<Team[]>
+    updatePairTeamWhenSmall(teamEntity: Team): Promise<Team[]>
+    getTeamPairbyUserName(userId: string): Promise<Team[]>
+    deletePairteam(userId: string): Promise<Team[]>
+    getTeamPairbyTeamName(teamName: number, pairName: string[]): Promise<Team[]>
+    updatePairMember(pairName: string, memberEmails: string[]): Promise<Team[]>
 }
