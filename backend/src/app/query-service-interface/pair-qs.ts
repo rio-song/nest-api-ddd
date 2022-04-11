@@ -1,11 +1,14 @@
+import { UserDTO } from "./user-qs"
+
 export class PairDTO {
     public readonly id: string
     public readonly pairName: string
-
-    public constructor(props: { id: string; pairName: string; }) {
-        const { id, pairName } = props
+    public readonly users: UserDTO[]
+    public constructor(props: { id: string; pairName: string; users: UserDTO[] }) {
+        const { id, pairName, users } = props
         this.id = id
         this.pairName = pairName
+        this.users = users
     }
 }
 

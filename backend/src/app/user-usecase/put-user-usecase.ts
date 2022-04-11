@@ -44,7 +44,7 @@ export class PutUserUseCase {
         if (userStatus === 'studying') {
             //ここもトランザクション必要
             await this.userRepo.save(userEntity);
-            await this.teamRepo.getTeamPair(userEntity.getUserId().id);
+            await this.teamRepo.getTeamPairbyUserName(userEntity.getUserId().id);
         } else {
             await this.userRepo.changeUserStatus(userEntity);
             await this.teamRepo.deletePairteam(userEntity.getUserId().id);

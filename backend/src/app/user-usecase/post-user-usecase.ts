@@ -26,8 +26,7 @@ export class PostUserUseCase {
             userStatus,
         } = params
 
-        new DomainService().emailDoubleCheck(email);
-
+        await new DomainService().emailDoubleCheck(email) !== null
         const userEntity = new User({
             id: createRandomIdString(),
             lastName,
@@ -35,10 +34,8 @@ export class PostUserUseCase {
             email,
             userStatus,
         })
-
         //ここもトランザクション必要
         await this.userRepo.save(userEntity);
-
         if (userStatus === "studying") {
             const allTeamMember = await this.teamRepo.getTeamPairbyUserName(userEntity.getUserId().id);
         }

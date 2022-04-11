@@ -4,6 +4,7 @@ import {
     ITeamQS,
 } from 'src/app/query-service-interface/team-qs'
 import { PairDTO } from 'src/app/query-service-interface/pair-qs'
+import { UserDTO } from 'src/app/query-service-interface/user-qs'
 
 export class TeamQS implements ITeamQS {
     private prismaClient: PrismaClient
@@ -16,7 +17,15 @@ export class TeamQS implements ITeamQS {
             include: {
                 pairBelongTeam: {
                     include: {
-                        pair: true
+                        pair: {
+                            include: {
+                                pairBelongMember: {
+                                    include: {
+                                        user: true
+                                    }
+                                }
+                            }
+                        }
                     }
                 },
             },
@@ -27,7 +36,21 @@ export class TeamQS implements ITeamQS {
                 new TeamDTO({
                     id: teamDM.id,
                     teamName: teamDM.teamName,
-                    pair: teamDM.pairBelongTeam.map((p) => new PairDTO({ id: p.pair.id, pairName: p.pair.pairName })),
-                }))
+                    pair: teamDM.pairBelongTeam.map((p) =>
+                        new PairDTO({
+                            id: p.pair.id,
+                            pairName: p.pair.pairName,
+                            users: p.pair.pairBelongMember.map((u) =>
+                                new UserDTO({
+                                    id: u.user.id,
+                                    firstName: u.user.firstName,
+                                    lastName: u.user.lastName,
+                                    email: u.user.email,
+                                    userStatus: u.user.userStatus
+                                }))
+                        }),
+                    )
+                })
+        )
     }
 }
