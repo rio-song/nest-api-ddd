@@ -1,7 +1,5 @@
 
 import { Pair } from "./pair"
-import { TeamRepository } from "src/infra/db/repository/team-repository"
-import { PrismaClient } from '@prisma/client'
 
 export class Team {
     private id: string
@@ -12,16 +10,16 @@ export class Team {
         this.id = id
         this.teamName = teamName
         this.pairs = pairs
-        if (this.pairs.map((u) => u.getAllProperties().users).length > 3) {
-            const prisma = new PrismaClient()
-            new TeamRepository(prisma).updatePairTeam(new Team(props));
-        }
-        if (pairs.length > 2) {
-            if (this.pairs.map((u) => u.getAllProperties().users).length < 1) {
-                const prisma = new PrismaClient()
-                new TeamRepository(prisma).updatePairTeamWhenSmall(new Team(props));
-            }
-        }
+        // if (this.pairs.map((u) => u.getAllProperties().users).length > 3) {
+        //     const prisma = new PrismaClient()
+        //     new TeamRepository(prisma).updatePairTeam(new Team(props));
+        // }
+        // if (pairs.length > 2) {
+        //     if (this.pairs.map((u) => u.getAllProperties().users).length < 1) {
+        //         const prisma = new PrismaClient()
+        //         new TeamRepository(prisma).updatePairTeamWhenSmall(new Team(props));
+        //     }
+        // }
     }
 
     public getAllProperties() {
@@ -32,17 +30,18 @@ export class Team {
         }
     }
 
-    // public getPairName() {
-    //     return {
-    //         teamName: this.teamName,
-    //     }
-    // }
+    public getTeamId() {
+        return this.id
+    }
 
-    // public getPairs() {
-    //     return {
-    //         users: this.pairs,
-    //     }
-    // }
+    public getTeamName() {
+        return this.teamName
+    }
+
+    public getPairs(): Pair[] {
+        return this.pairs
+    }
+
 }
 
 export class TeamNameVO {

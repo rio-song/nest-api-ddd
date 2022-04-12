@@ -18,12 +18,13 @@ export class Pair {
     }
 
     public getPairName() {
-        return {
-            pairName: this.pairName,
-        }
+        return this.pairName
     }
     public getPairId() {
-        return { id: this.id }
+        return this.id
+    }
+    public getUsers() {
+        return this.users
     }
 }
 
