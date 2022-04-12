@@ -10,7 +10,6 @@ export interface ITeamRepository {
 
     createTeamPair(teamEntity: Team): Promise<Team[]>
     updatePairTeamWhenSmall(teamEntity: Team): Promise<Team[]>
-    //getTeamPairbyUserName(userId: string): Promise<Team[]>
     deletePairteam(userId: string): Promise<Team[]>
     getTeamPairbyTeamName(teamName: number, pairName: string[]): Promise<Team[]>
     updatePairMember(pairName: string, memberEmails: string[]): Promise<Team[]>
