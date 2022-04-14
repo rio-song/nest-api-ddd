@@ -1,4 +1,3 @@
-
 import { PrismaClient } from '@prisma/client'
 import { ITeamRepository } from 'src/domain/repository-interface/team-repository'
 import { Team, TeamNameVO } from 'src/domain/entity/team'

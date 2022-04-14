@@ -163,7 +163,7 @@ export class PutUserUseCase {
 
                 const smallestPair = await this.teamRepo.getSmallestPair()
 
-                //以下同じ処理３回目なので移動したい。
+                //以下同じ処理を３回目重複して書いているので移動したい。
                 if (smallestPair === null) {
                     const team = await this.teamRepo.getTeamId()
                     if (team != null) {
