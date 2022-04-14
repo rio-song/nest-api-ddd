@@ -44,8 +44,8 @@ export class TeamRepository implements ITeamRepository {
     }
 
     //3人以下のペアを探す。
-    public async getPairUnder3members(): Promise<Team | null> {
-        const teamUnder26pairs = await this.prismaClient.pair.findFirst({
+    public async getSmallestPair(): Promise<Team | null> {
+        const smallestPair = await this.prismaClient.pair.findFirst({
             include: {
                 pairBelongMember: {
                     orderBy: {
@@ -54,10 +54,10 @@ export class TeamRepository implements ITeamRepository {
                 }
             }
         })
-        if (teamUnder26pairs != null) {
+        if (smallestPair != null) {
             const getTeambyPairId = await this.prismaClient.pairBelongTeam.findFirst({
                 where: {
-                    pairId: teamUnder26pairs?.id
+                    pairId: smallestPair?.id
                 }, include: {
                     team: true
                 }
@@ -68,9 +68,9 @@ export class TeamRepository implements ITeamRepository {
                         id: getTeambyPairId?.teamId,
                         teamName: new TeamNameVO(getTeambyPairId?.team.teamName),
                         pairs: [new Pair({
-                            id: teamUnder26pairs.id,
-                            pairName: new PairNameVO(teamUnder26pairs.pairName),
-                            users: teamUnder26pairs.pairBelongMember.map((u) => u.userId)
+                            id: smallestPair.id,
+                            pairName: new PairNameVO(smallestPair.pairName),
+                            users: smallestPair.pairBelongMember.map((u) => u.userId)
                         }),]
                     })
                 return getTeamEntity
@@ -124,8 +124,8 @@ export class TeamRepository implements ITeamRepository {
         }
     }
 
-    public async deletePairteam(userId: string): Promise<Team[]> {
-        const deletedUserDatamodel = await this.prismaClient.pairBelongMember.deleteMany({
+    public async deletePairMember(userId: string): Promise<Team[]> {
+        await this.prismaClient.pairBelongMember.deleteMany({
             where: {
                 userId: userId
             },
@@ -133,53 +133,13 @@ export class TeamRepository implements ITeamRepository {
         return this.getTeamEntity()
     }
 
-    //合流先は同じチームの中から最も参加人数が少ないペアから自動的に選ばれる
-    public async updatePairTeamWhenSmall(teamEntity: Team): Promise<Team[]> {
-        const { id, teamName, pairs } = teamEntity.getAllProperties()
-        if (pairs.map((u) => u.getAllProperties().users).length < 1) {
-            const index = pairs.findIndex((element) => element.getAllProperties().users.length < 1)
 
-            await this.prismaClient.$transaction(async (prismaClient) => {
-                const deletedUserDatamodel = await this.prismaClient.pairBelongMember.deleteMany({
-                    where: {
-                        userId: pairs[index]?.getAllProperties().users[0]
-                    },
-                })
-
-                const foundSmallPairId = await this.prismaClient.pairBelongMember.groupBy({
-                    by: ['pairId'],
-                    // include: {
-                    //     pair: {
-                    //         include: {
-                    //             pairBelongTeam: {
-                    //                 where: {
-                    //                     teamId: "123"
-                    //                 }
-                    //             }
-                    //         }
-                    //     }
-                    // },
-                    orderBy: {
-                        pairId: 'asc',
-                    },
-                })
-
-                //既に持ってるチームIDの中で、最も人数が少ないペアを探す。
-
-                if (foundSmallPairId[0] != null) {
-                    const savedTeamDatamodel1 = await this.prismaClient.pairBelongMember.create({
-                        data: {
-                            id: createRandomIdString(),
-                            //↓undefinedを直すのはこの書き方でいいのか？？？
-                            userId: pairs[index]?.getAllProperties().users[0] || "",
-                            pairId: foundSmallPairId[0].pairId,
-                        }
-                    })
-
-                }
-
-            })
-        }
+    public async deletePair(pairId: string): Promise<Team[]> {
+        await this.prismaClient.pair.deleteMany({
+            where: {
+                id: pairId
+            },
+        })
         return this.getTeamEntity()
     }
 
@@ -256,6 +216,40 @@ export class TeamRepository implements ITeamRepository {
             }
         })
         return this.getTeamEntity()
+    }
+
+    public async getTeamPairbyUserId(userId: string): Promise<Team> {
+        const allTeamsDatamodel = await this.prismaClient.team.findFirst({
+            include: {
+                pairBelongTeam: {
+                    include: {
+                        pair: {
+                            include: {
+                                pairBelongMember: {
+                                    where: {
+                                        userId: userId
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+            },
+        })
+        if (allTeamsDatamodel != null) {
+            const getTeamEntity = new Team({
+                id: allTeamsDatamodel.id,
+                teamName: new TeamNameVO(allTeamsDatamodel.teamName),
+                pairs: allTeamsDatamodel.pairBelongTeam.map((p) => new Pair({
+                    id: p.pair.id,
+                    pairName: new PairNameVO(p.pair.pairName),
+                    users: [userId]
+                })),
+            })
+            return getTeamEntity;
+        } else {
+            throw new Error("チーム・ペアに所属していないユーザーです。")
+        }
     }
 
     public async getTeamEntity(): Promise<Team[]> {

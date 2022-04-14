@@ -10,16 +10,7 @@ export class Team {
         this.id = id
         this.teamName = teamName
         this.pairs = pairs
-        // if (this.pairs.map((u) => u.getAllProperties().users).length > 3) {
-        //     const prisma = new PrismaClient()
-        //     new TeamRepository(prisma).updatePairTeam(new Team(props));
-        // }
-        // if (pairs.length > 2) {
-        //     if (this.pairs.map((u) => u.getAllProperties().users).length < 1) {
-        //         const prisma = new PrismaClient()
-        //         new TeamRepository(prisma).updatePairTeamWhenSmall(new Team(props));
-        //     }
-        // }
+
     }
 
     public getAllProperties() {

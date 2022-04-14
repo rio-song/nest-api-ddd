@@ -39,7 +39,7 @@ export class PostUserUseCase {
         await this.userRepo.save(userEntity);
 
         if (userStatus === "studying") {
-            const smallestPair = await this.teamRepo.getPairUnder3members()
+            const smallestPair = await this.teamRepo.getSmallestPair()
 
             if (smallestPair === null) {
                 const team = await this.teamRepo.getTeamId()

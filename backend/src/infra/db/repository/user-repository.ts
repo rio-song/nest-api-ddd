@@ -42,4 +42,24 @@ export class UserRepository implements IUserRepository {
         })
         return updatedUserEntity
     }
+
+    public async getUserIdbyPairId(pairId: string): Promise<User[]> {
+
+        const userDatamodel = await this.prismaClient.pairBelongMember.findMany({
+            where: {
+                pairId: pairId,
+            },
+            include: {
+                user: true,
+            },
+        })
+        const updatedUserEntity = userDatamodel.map((u) => new User({
+            id: u.user.id,
+            lastName: u.user.lastName,
+            firstName: u.user.firstName,
+            email: u.user.email,
+            userStatus: u.user.userStatus
+        }))
+        return updatedUserEntity
+    }
 }

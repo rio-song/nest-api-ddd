@@ -26,6 +26,9 @@ export class Pair {
     public getUsers() {
         return this.users
     }
+    public countmembersOfPair() {
+        return this.users.length
+    }
 }
 
 
