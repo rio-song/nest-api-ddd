@@ -1,6 +1,6 @@
 import { Lesson } from 'src/domain/entity/lesson'
 import { ILessonRepository } from 'src/domain/repository-interface/lesson-repository'
-//import { ILessonQS } from 'src/app/query-service-interface/lesson-qs'
+import { ILessonQS } from 'src/app/query-service-interface/lesson-qs'
 import { UserLessonVO } from 'src/domain/entity/user-lessonVO'
 
 

@@ -31,6 +31,7 @@ export class TeamRepository implements ITeamRepository {
                     pairName: pairs.shift()?.getPairName().getPairNameVO() || "",
                 },
             })
+
             const savedPairBelongTeam = await this.prismaClient.pairBelongTeam.create({
                 data: {
                     id: createRandomIdString(),
