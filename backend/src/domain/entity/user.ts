@@ -11,7 +11,11 @@ export class User {
         this.lastName = lastName
         this.firstName = firstName
         this.email = email
-        this.userStatus = userStatus
+        if (userStatus === "studying" || userStatus === "breaking" || userStatus === "withdraw") {
+            this.userStatus = userStatus
+        } else {
+            throw new Error("使用できない名称です")
+        }
     }
 
     public getAllProperties() {
@@ -21,6 +25,12 @@ export class User {
             firstName: this.firstName,
             email: this.email,
             userStatus: this.userStatus,
+        }
+    }
+
+    public getUserId() {
+        return {
+            id: this.id
         }
     }
 }

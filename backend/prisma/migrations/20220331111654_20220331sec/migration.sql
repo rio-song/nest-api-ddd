@@ -1,0 +1,2 @@
+-- AddForeignKey
+ALTER TABLE "pair" ADD FOREIGN KEY ("teamId") REFERENCES "team"("id") ON DELETE CASCADE ON UPDATE CASCADE;

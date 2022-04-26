@@ -1,6 +1,6 @@
-import { IUserQS } from './query-service-interface/user-qs'
+import { IUserQS } from '../query-service-interface/user-qs'
 
-export class GetAllUsersUseCase {
+export class GetUserLessonUseCase {
     private readonly userQS: IUserQS
     public constructor(userQS: IUserQS) {
         this.userQS = userQS

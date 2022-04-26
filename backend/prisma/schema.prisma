@@ -4,14 +4,63 @@ datasource db {
 }
 
 generator client {
-  previewFeatures = ["nativeTypes"]
+  // previewFeatures = ["nativeTypes"]
+  previewFeatures = ["interactiveTransactions"]
   provider        = "prisma-client-js"
 }
 
 model user {
-  id         String @id
-  lastName   String @db.Text
-  firstName  String @db.Text
-  email      String @db.Text
-  userStatus String @db.Text
+  id                 String               @id
+  lastName           String               @db.Text
+  firstName          String               @db.Text
+  email              String               @db.Text
+  userStatus         String               @db.Text
+  pairBelongMember   pairBelongMember[]
+  lessonBelongMember lessonBelongMember[]
+}
+
+model team {
+  id             String           @id
+  teamName       Int
+  pairBelongTeam pairBelongTeam[]
+}
+
+model pairBelongTeam {
+  id     String @id
+  pairId String @db.Text
+  teamId String @db.Text
+  pair   pair   @relation(fields: [pairId], references: [id])
+  team   team   @relation(fields: [teamId], references: [id])
+}
+
+model pair {
+  id               String             @id
+  pairName         String             @db.Text
+  pairBelongTeam   pairBelongTeam[]
+  pairBelongMember pairBelongMember[]
+}
+
+model pairBelongMember {
+  id     String @id
+  userId String @db.Text
+  pairId String @db.Text
+  user   user   @relation(fields: [userId], references: [id])
+  pair   pair   @relation(fields: [pairId], references: [id])
+
+}
+
+model lesson {
+  id                 String               @id
+  lessonNumber       Int
+  lessonTitle        String               @db.Text
+  lessonBelongMember lessonBelongMember[]
+}
+
+model lessonBelongMember {
+  id       String @id
+  userId   String @db.Text
+  lessonId String @db.Text
+  status   String @db.Text
+  user     user   @relation(fields: [userId], references: [id])
+  lesson   lesson @relation(fields: [lessonId], references: [id])
 }
